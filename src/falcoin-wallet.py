@@ -4,8 +4,10 @@ import re
 import crypto
 import time
 from User import User
+from Repository import Repository
 
 user = None
+repository = None
 
 
 def is_user_connected():
@@ -27,21 +29,25 @@ def display_banner_keys(private_key, public_key):
 
 
 def create_account():
+    global repository
+
     print('create account')
     print("Generating key pair...")
     # faking load
     time.sleep(1)
     private_key, public_key = crypto.generate_key_pair()
+    new_user = User(private_key, time.time())
 
-    # TODO: Save user in db
+    repository.save_user(new_user)
 
     display_banner_keys(private_key, public_key)
 
-    return User(private_key, time.time())
+    return new_user
 
 
 def sign_in():
     global user
+    global repository
 
     print('sign in')
 
@@ -54,10 +60,8 @@ def sign_in():
         is_valid_input = re.match(p_key_reg, user_input)
         has_retried = not is_valid_input
     print("Your private key:", user_input)
-    # TODO: check if private key exists in db
-    # TODO: if user exists, hydrate user obj
-    user = User()
 
+    user = repository.get_user(user_input)
     if user is not None:
         print("You are connected now.")
     else:
@@ -110,6 +114,10 @@ def main():
         ('Logout', logout, True, False),
         ('Exit', exit_app, False, False),
     ]
+
+    global repository
+    repository = Repository()
+    repository.init_db()
 
     while True:
         if is_user_connected():
