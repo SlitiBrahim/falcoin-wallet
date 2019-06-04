@@ -30,12 +30,6 @@ class Repository:
 
         return User(private_key, created_at)
 
-    @staticmethod
-    def get_balance(private_key):
-        # TODO: Get balance from API
-
-        return 0.0
-
     def get_user(self, private_key):
         user_docs = self.get_table(Repository.table_user).all()
         users = [Repository.deserialize_user(u_doc) for u_doc in user_docs]

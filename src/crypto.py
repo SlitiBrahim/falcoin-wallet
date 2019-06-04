@@ -17,6 +17,11 @@ def generate_key_pair():
 
     return key_to_hex(private_key), key_to_hex(public_key)
 
+def get_public_key(private_key_str):
+    private_key = RSA.importKey(binascii.unhexlify(private_key_str))
+
+    return key_to_hex(private_key.publickey())
+
 def key_to_hex(key):
     return binascii.hexlify(key.exportKey(format='DER')).decode('ascii')
 

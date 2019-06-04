@@ -5,6 +5,7 @@ import crypto
 import time
 from User import User
 from Repository import Repository
+from ApiManager import ApiManager
 
 user = None
 repository = None
@@ -99,12 +100,7 @@ def display_menu(menu_items, is_connected):
 
 
 def display_balance(user):
-    # TODO: Uncomment when Repository.get_balance() is complete
-    # global repository
-    #
-    # balance = repository.get_balance(user.get_private_key())
-
-    balance = 0.0  # temporary
+    balance = ApiManager.get_balance(user.get_public_key())
     print("\n== Balance: {} falcoins. ==\n".format(balance))
 
 

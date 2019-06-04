@@ -1,3 +1,6 @@
+import crypto
+
+
 class User:
 
     def __init__(self, private_key=None, created_at=None):
@@ -6,6 +9,9 @@ class User:
 
     def get_private_key(self):
         return self._private_key
+
+    def get_public_key(self):
+        return crypto.get_public_key(self._private_key)
 
     def set_private_key(self, private_key):
         self._private_key = private_key
