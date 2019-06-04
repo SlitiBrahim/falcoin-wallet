@@ -2,6 +2,7 @@ from pyfiglet import Figlet
 import sys
 import re
 
+# TODO: Replace with user object, None if not connected
 is_connected = False
 
 
