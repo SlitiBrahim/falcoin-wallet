@@ -60,6 +60,11 @@ def display_menu(menu_items, is_connected):
         print("[{}] {}".format(index, cmd_title))
 
 
+def display_balance(user):
+    # TODO: Get user's balance from API
+    print("\n== Balance: {} falcoins. ==\n".format(0.0))
+
+
 def main():
     f = Figlet(font='doom')
     print(f.renderText("Falcoin Wallet"))
@@ -77,6 +82,10 @@ def main():
     global is_connected
 
     while True:
+        if is_connected:
+            # TODO: replace by connected user
+            display_balance(None)
+
         display_menu(main_menu_items, is_connected)
         choice = int(input('>> '))
         assert choice >= 0
