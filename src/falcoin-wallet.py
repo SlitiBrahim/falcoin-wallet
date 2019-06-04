@@ -61,6 +61,8 @@ def sign_in():
         has_retried = not is_valid_input
     print("Your private key:", user_input)
 
+    # fake loading of user
+    time.sleep(1)
     user = repository.get_user(user_input)
     if user is not None:
         print("You are connected now.")
