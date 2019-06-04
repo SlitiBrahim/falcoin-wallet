@@ -1,50 +1,80 @@
 from pyfiglet import Figlet
 import sys
+import re
+
+is_connected = False
+
+
+def create_account():
+    print('create account')
+
+
+def sign_in():
+    global is_connected
+
+    print('sign in')
+
+    p_key_reg = r"^\w+$"
+    user_input = ""
+    is_valid_input = False
+    has_retried = False
+    while not is_valid_input:
+        user_input = input('>> Please enter {} private key: '.format("a valid" if has_retried else "your"))
+        is_valid_input = re.match(p_key_reg, user_input)
+        has_retried = not is_valid_input
+    print("Your private key:", user_input)
+    # TODO: check if private key exists in db
+    is_connected = True
+
+    if is_connected:
+        print("You are connected now.")
+    else:
+        print("Invalid private key.")
+
+
+def send_transaction():
+    print('send transaction')
+
+
+def my_transactions():
+    print('my transactions')
+
+
+def logout():
+    print('logout')
+
+
+def exit_app():
+    print('exit')
+    sys.exit(0)
+
+
+def display_menu(menu_items, is_connected):
+    for index, item in enumerate(menu_items):
+        cmd_title, func, must_be_connected, hide_if_connected = item
+        if (must_be_connected and not is_connected) or (hide_if_connected and is_connected):
+            continue
+        print("[{}] {}".format(index, cmd_title))
+
 
 def main():
     f = Figlet(font='doom')
     print(f.renderText("Falcoin Wallet"))
 
-    def create_account():
-        print('create account')
-
-    def sign_in():
-        print('sign in')
-
-    def send_transaction():
-        print('send transaction')
-
-    def my_transactions():
-        print('my transactions')
-
-    def logout():
-        print('logout')
-
-    def exit_app():
-        print('exit')
-        sys.exit(0)
-
-    # list of commands as (menu_item, func, must_be_connected)
+    # list of commands as (menu_item, func, must_be_connected, hide_if_connected)
     main_menu_items = [
-        ('Create account', create_account, False),
-        ('Sign in', sign_in, False),
-        ('Send transaction', send_transaction, True),
-        ('My transactions', my_transactions, True),
-        ('Logout', logout, True),
-        ('Exit', exit_app, False),
+        ('Create account', create_account, False, True),
+        ('Sign in', sign_in, False, True),
+        ('Send transaction', send_transaction, True, False),
+        ('My transactions', my_transactions, True, False),
+        ('Logout', logout, True, False),
+        ('Exit', exit_app, False, False),
     ]
 
-    def display_menu(menu_items, is_connected):
-        for index, item in enumerate(menu_items):
-            cmd_title, func, must_be_connected = item
-            if must_be_connected and not is_connected:
-                continue
-            print("[{}] {}".format(index, cmd_title))
-
-    connected = False
+    global is_connected
 
     while True:
-        display_menu(main_menu_items, connected)
+        display_menu(main_menu_items, is_connected)
         choice = int(input('>> '))
         assert choice >= 0
         try:
