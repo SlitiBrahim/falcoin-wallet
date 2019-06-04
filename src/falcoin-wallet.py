@@ -41,7 +41,10 @@ def my_transactions():
 
 
 def logout():
-    print('logout')
+    global is_connected
+
+    print('logging out')
+    is_connected = False
 
 
 def exit_app():
