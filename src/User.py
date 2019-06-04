@@ -15,3 +15,11 @@ class User:
 
     def set_created_at(self, timestamp):
         self._created_at = timestamp
+
+    def serialize(self):
+        s_user = {
+            'private_key': self._private_key,
+            'created_at': self._created_at
+        }
+
+        return s_user
