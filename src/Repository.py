@@ -32,7 +32,7 @@ class Repository:
 
     @staticmethod
     def get_balance(private_key):
-        # TODO: Call to api
+        # TODO: Get balance from API
 
         return 0.0
 

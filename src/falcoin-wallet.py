@@ -97,8 +97,13 @@ def display_menu(menu_items, is_connected):
 
 
 def display_balance(user):
-    # TODO: Get user's balance from API
-    print("\n== Balance: {} falcoins. ==\n".format(0.0))
+    # TODO: Uncomment when Repository.get_balance() is complete
+    # global repository
+    #
+    # balance = repository.get_balance(user.get_private_key())
+
+    balance = 0.0  # temporary
+    print("\n== Balance: {} falcoins. ==\n".format(balance))
 
 
 def main():
