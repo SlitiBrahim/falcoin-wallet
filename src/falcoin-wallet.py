@@ -6,7 +6,13 @@ import time
 from User import User
 
 # TODO: Replace with user object, None if not connected
-is_connected = False
+user = None
+
+
+def is_user_connected():
+    global user
+
+    return user is not None
 
 
 def display_banner_keys(private_key, public_key):
@@ -34,8 +40,9 @@ def create_account():
 
     return User(private_key, time.time())
 
+
 def sign_in():
-    global is_connected
+    global user
 
     print('sign in')
 
@@ -49,9 +56,10 @@ def sign_in():
         has_retried = not is_valid_input
     print("Your private key:", user_input)
     # TODO: check if private key exists in db
-    is_connected = True
+    # TODO: if user exists, hydrate user obj
+    user = User()
 
-    if is_connected:
+    if user is not None:
         print("You are connected now.")
     else:
         print("Invalid private key.")
@@ -66,10 +74,10 @@ def my_transactions():
 
 
 def logout():
-    global is_connected
+    global user
 
     print('logging out')
-    is_connected = False
+    user = None
 
 
 def exit_app():
@@ -104,14 +112,11 @@ def main():
         ('Exit', exit_app, False, False),
     ]
 
-    global is_connected
-
     while True:
-        if is_connected:
-            # TODO: replace by connected user
-            display_balance(None)
+        if is_user_connected():
+            display_balance(user)
 
-        display_menu(main_menu_items, is_connected)
+        display_menu(main_menu_items, is_user_connected())
         choice = int(input('>> '))
         assert choice >= 0
         try:
