@@ -2,14 +2,37 @@ from pyfiglet import Figlet
 import sys
 import re
 import crypto
+import time
+from User import User
 
 # TODO: Replace with user object, None if not connected
 is_connected = False
 
 
+def display_banner_keys(private_key, public_key):
+    print()
+    print('*' * 126)
+    print('*' * 37 + " WARNING: SAVE YOUR PRIVATE KEY AND KEEP IT SECRET " + '*' * 37)
+    print('*' * 37 + " IF YOU LOSE YOUR PRIVATE KEY YOU'LL LOSE YOUR COINS " + '*' * 37)
+    print('*' * 20 + " YOU SHOULD ONY SHARE YOUR PUBLIC KEY SO PEOPLE CAN MAKE TRANSACTIONS TO YOUR ACCOUNT " + '*' * 20)
+    print('*' * 37 + " Private key: {} ".format(private_key) + '*' * 37)
+    print('*' * 37 + " Public key: {} ".format(public_key) + '*' * 37)
+    print('*' * 126)
+    print()
+
+
 def create_account():
     print('create account')
+    print("Generating key pair...")
+    # faking load
+    time.sleep(1)
+    private_key, public_key = crypto.generate_key_pair()
 
+    # TODO: Save user in db
+
+    display_banner_keys(private_key, public_key)
+
+    return User(private_key, time.time())
 
 def sign_in():
     global is_connected
