@@ -1,6 +1,7 @@
 from pyfiglet import Figlet
 import sys
 import re
+import crypto
 
 # TODO: Replace with user object, None if not connected
 is_connected = False
