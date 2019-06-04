@@ -1,8 +1,8 @@
 class User:
 
-    def __init__(self, private_key=None):
+    def __init__(self, private_key=None, created_at=None):
         self._private_key = private_key
-        self._created_at = None
+        self._created_at = created_at
 
     def get_private_key(self):
         return self._private_key
