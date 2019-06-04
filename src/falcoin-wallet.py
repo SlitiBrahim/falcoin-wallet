@@ -72,8 +72,30 @@ def sign_in():
 
 
 def send_transaction():
-    print('send transaction')
+    global user
 
+    print('send transaction')
+    print("Getting user's balance...")
+    balance = ApiManager.get_balance(user.get_public_key())
+    if balance == 0.0:
+        print("You currently don't have any coins, you cannot make a transaction.")
+        return
+
+    while True:
+        try:
+            tx_amount = float(input("> Enter the amount of the transaction: "))
+            break
+        except ValueError:
+            print('Please enter a float number.')
+
+    if balance < tx_amount:
+        print("Transaction error:\n"
+              "Your balance ({}) is lower than the amount of "
+              "the transaction you want to create which is equals to {}."
+              .format(balance, tx_amount))
+        return
+
+    pass
 
 def my_transactions():
     print('my transactions')
