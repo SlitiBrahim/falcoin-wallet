@@ -5,7 +5,6 @@ import crypto
 import time
 from User import User
 
-# TODO: Replace with user object, None if not connected
 user = None
 
 
