@@ -24,6 +24,10 @@ class Input:
     def get_output_ref(self):
         return self._output_ref
 
+    def is_empty(self):
+        return self._prev_tx is None and self._index < 0
+
+
     # def is_output_spent(self, blockchain):
     #     output = self.__output_ref
     #     output_block = blockchain.find_output_block(output)
