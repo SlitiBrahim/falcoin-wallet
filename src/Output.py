@@ -6,10 +6,11 @@ from hashlib import sha256
 
 class Output:
 
-    def __init__(self, value, pubkey, timestamp=None):
+    def __init__(self, value, pubkey, spent, timestamp=None):
         self._value = value
         self._pubkey = pubkey
         self._timestamp = timestamp if timestamp else time.time()
+        self._spent = spent
 
     def get_value(self):
         return self._value
@@ -21,7 +22,8 @@ class Output:
         data = {
             "value": self._value,
             "pubkey": self._pubkey,
-            "time": self._timestamp
+            "time": self._timestamp,
+            "spent": self._spent
         }
 
         return data
@@ -31,8 +33,9 @@ class Output:
         value = data['value']
         pubkey = data['pubkey']
         timestamp = data['time']
+        spent = data['spent']
 
-        return Output(value, pubkey, timestamp)
+        return Output(value, pubkey, spent, timestamp)
 
     def hash(self):
         """Returns hash of output"""
