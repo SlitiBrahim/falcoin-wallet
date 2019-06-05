@@ -24,7 +24,7 @@ class Repository:
 
     def get_user(self, private_key):
         user_docs = self.get_table(Repository.table_user).all()
-        users = [User.deserialize_user(doc) for doc in user_docs]
+        users = [User.deserialize(doc) for doc in user_docs]
 
         for user in users:
             if user.get_private_key() == private_key:
