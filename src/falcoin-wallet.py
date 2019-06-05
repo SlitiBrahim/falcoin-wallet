@@ -99,8 +99,11 @@ def send_transaction():
 
 
 def my_transactions():
-    print('my transactions')
+    global user
 
+    print('my transactions')
+    user_txs = ApiManager.get_transactions(user.get_public_key())
+    print("{} transactions.".format(len(user_txs)))
 
 def logout():
     global user
