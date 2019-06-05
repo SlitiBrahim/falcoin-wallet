@@ -18,6 +18,12 @@ class Output:
     def get_pubkey(self):
         return self._pubkey
 
+    def is_spent(self):
+        return self._spent
+
+    def set_is_spent(self, spent=True):
+        self._spent = spent
+
     def serialize(self):
         data = {
             "value": self._value,
