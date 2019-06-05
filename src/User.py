@@ -29,3 +29,10 @@ class User:
         }
 
         return s_user
+
+    @staticmethod
+    def deserialize(data):
+        private_key = data['private_key']
+        created_at = data['created_at']
+
+        return User(private_key, created_at)
