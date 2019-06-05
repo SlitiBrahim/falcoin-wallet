@@ -1,14 +1,12 @@
 from tinydb import TinyDB
 import os
 from User import User
-from Transaction import Transaction
 
 
 class Repository:
 
     _db_path = os.path.abspath('../.db/.wallet.db')
     table_user = 'users'
-    table_transaction = 'transactions'
 
     def __init__(self):
         self._db = None
@@ -17,8 +15,8 @@ class Repository:
         self._db = TinyDB(Repository._db_path)
 
     def get_table(self, table_name):
-        table_exists = table_name == Repository.table_transaction \
-                    or table_name == Repository.table_user
+        # can add other tables
+        table_exists = table_name == Repository.table_user
 
         assert table_exists, 'Given table does not exist.'
 
@@ -33,12 +31,6 @@ class Repository:
                 return user
 
         return None
-
-    def get_transactions(self):
-        txs_docs = self.get_table(Repository.table_transaction).all()
-        txs = [Transaction.deserialize(doc) for doc in txs_docs]
-
-        return txs
 
     def save_user(self, user):
         # check if user already exists
