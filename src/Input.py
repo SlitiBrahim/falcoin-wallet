@@ -27,16 +27,6 @@ class Input:
     def is_empty(self):
         return self._prev_tx is None and self._index < 0
 
-
-    # def is_output_spent(self, blockchain):
-    #     output = self.__output_ref
-    #     output_block = blockchain.find_output_block(output)
-    #
-    #     if output.find_reference(output_block, blockchain) is not None:
-    #         return True
-    #
-    #     return False
-
     # def can_unlock(self, data, blockchain):
     #     """Check that output_ref could be unlocked.
     #     output_ref's receiver must be the one who signed the current input
