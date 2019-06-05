@@ -87,21 +87,3 @@ class Transaction:
         data = (tx_data + str(time.time())).encode().decode("utf-8")
 
         return sha256(data.encode()).hexdigest()
-
-    def is_involved(self, pubkey):
-        """Return a boolean on either the given pubkey
-        is involved in this transaction or not.
-        Pubkey is involved if it's used in input output refs or in outputs."""
-
-        for tx_input in self._inputs:
-            if not tx_input.is_empty():
-                txo = tx_input.get_output_ref()
-                if pubkey == txo.get_pubkey():
-                    return True
-        for tx_output in self._outputs:
-            if pubkey == tx_output.get_pubkey():
-                return True
-
-        return False
-
-

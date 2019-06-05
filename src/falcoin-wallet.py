@@ -105,6 +105,7 @@ def my_transactions():
     user_txs = ApiManager.get_transactions(user.get_public_key())
     print("{} transactions.".format(len(user_txs)))
 
+
 def logout():
     global user
 
