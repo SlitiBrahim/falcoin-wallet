@@ -35,11 +35,16 @@ class Output:
         return data
 
     @staticmethod
-    def deserialize(data):
+    def deserialize(data, include_spent=True):
         value = data['value']
         pubkey = data['pubkey']
         timestamp = data['time']
-        spent = data['spent']
+
+        if include_spent:
+            spent = data['spent']
+        else:
+            # default value (input.output_ref does not contains spent key)
+            spent = False
 
         return Output(value, pubkey, spent, timestamp)
 

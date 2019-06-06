@@ -62,7 +62,9 @@ class Input:
         index = data['index']
 
         if data['output_ref'] is not None:
-            output_ref = Output.deserialize(data['output_ref'])
+            output_ref = Output.deserialize(data['output_ref'], False)
+            # set output as spent since it is referenced by current input
+            output_ref.set_is_spent(True)
         else:
             output_ref = None
 
