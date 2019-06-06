@@ -30,6 +30,17 @@ def display_banner_keys(private_key, public_key):
     print()
 
 
+def ask_for_validation(msg=None):
+    default_msg = ">> Do you want to validate ? "\
+                  "\nEnter 'y' if yes, 'n' if you want to abort: "
+
+    user_input = ""
+    while user_input != 'y' and user_input != 'n':
+        user_input = input(msg if msg is not None else default_msg)
+
+    return user_input is 'y'
+
+
 def create_account():
     global repository
 
@@ -118,9 +129,15 @@ def send_transaction():
     print("Recipient:", tx_pubkey)
 
     transaction = Transaction.make_transaction(user, tx_amount, tx_pubkey, fees, ApiManager)
-    # TODO: Ask for validation
+    did_user_validates = ask_for_validation()
 
-    # TODO: Send transaction to api
+    if did_user_validates:
+        # TODO: Send transaction to api
+
+        print("Success ! The transaction has been sent to the blockchain. "
+              "It is going to be validated by miners, please wait for confirmation.")
+    else:
+        print("Transaction has been aborted.")
 
 
 def my_transactions():
