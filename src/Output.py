@@ -60,3 +60,23 @@ class Output:
         tx_output_values = [output.get_value() for output in outputs]
 
         return math.fsum(tx_output_values)
+
+    @staticmethod
+    def get_unspent_txos(transactions):
+        utxos = []
+        for tx in transactions:
+            for txo in tx.get_outputs():
+                if not txo.is_spent():
+                    utxos.append(txo)
+
+        return utxos
+
+    @staticmethod
+    def filter_ouputs_by_owner(outputs, user):
+        user_txos = []
+
+        for txo in outputs:
+            if txo.get_pubkey() == user.get_public_key():
+                user_txos.append(txo)
+
+        return user_txos

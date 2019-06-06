@@ -6,6 +6,7 @@ import time
 from User import User
 from Repository import Repository
 from ApiManager import ApiManager
+from Transaction import Transaction
 
 user = None
 repository = None
@@ -52,13 +53,13 @@ def sign_in():
 
     print('sign in')
 
-    p_key_reg = r"^\w+$"
+    key_reg = r"^\w+$"
     user_input = ""
     is_valid_input = False
     has_retried = False
     while not is_valid_input:
         user_input = input('>> Please enter {} private key: '.format("a valid" if has_retried else "your"))
-        is_valid_input = re.match(p_key_reg, user_input)
+        is_valid_input = re.match(key_reg, user_input)
         has_retried = not is_valid_input
     print("Your private key:", user_input)
 
@@ -88,14 +89,38 @@ def send_transaction():
         except ValueError:
             print('Please enter a float number.')
 
-    if balance < tx_amount:
-        print("Transaction error:\n"
-              "Your balance ({}) is lower than the amount of "
-              "the transaction you want to create which is equals to {}."
-              .format(balance, tx_amount))
+    # as asked in the project specs, txs are fee-less but it can be modified
+    fees = Transaction.fees_default_amount
+    if balance + fees < tx_amount:
+        print("Transaction error:")
+        if balance < tx_amount:
+            print("Your balance ({}) is lower than the amount of "
+                  "the transaction you want to create which is equals to {}."
+                  .format(balance, tx_amount))
+        elif balance + fees < tx_amount:
+            print("Your balance ({}) + fees ({}) = {} is lower than the amount of "
+                  "the transaction you want to create which is equals to {}."
+                  .format(balance, fees, balance + fees, tx_amount))
+
         return
 
-    pass
+    key_reg = r"^\w+$"
+    user_input = ""
+    is_valid_input = re.match(key_reg, user_input)
+    has_retried = False
+    while not is_valid_input:
+        user_input = input('>> {}Please enter the public key of your recipient: '
+                           .format("Public key is not valid. " if has_retried else ""))
+        is_valid_input = re.match(key_reg, user_input)
+        has_retried = not is_valid_input
+
+    tx_pubkey = user_input
+    print("Recipient:", tx_pubkey)
+
+    transaction = Transaction.make_transaction(user, tx_amount, tx_pubkey, fees, ApiManager)
+    # TODO: Ask for validation
+
+    # TODO: Send transaction to api
 
 
 def my_transactions():
