@@ -19,31 +19,50 @@ def is_user_connected():
 
 
 def display_banner_keys(private_key, public_key):
+    color = 'yellow'
+
     print()
-    print('*' * 126)
-    print('*' * 37 + " WARNING: SAVE YOUR PRIVATE KEY AND KEEP IT SECRET " + '*' * 37)
-    print('*' * 37 + " IF YOU LOSE YOUR PRIVATE KEY YOU'LL LOSE YOUR COINS " + '*' * 37)
-    print('*' * 20 + " YOU SHOULD ONY SHARE YOUR PUBLIC KEY SO PEOPLE CAN MAKE TRANSACTIONS TO YOUR ACCOUNT " + '*' * 20)
-    print('*' * 37 + " Private key: {} ".format(private_key) + '*' * 37)
-    print('*' * 37 + " Public key: {} ".format(public_key) + '*' * 37)
-    print('*' * 126)
+    print(colorize('*' * 126, color))
+    print(colorize('*' * 37 + " WARNING: SAVE YOUR PRIVATE KEY AND KEEP IT SECRET " + '*' * 37, color))
+    print(colorize('*' * 37 + " IF YOU LOSE YOUR PRIVATE KEY YOU'LL LOSE YOUR COINS " + '*' * 37, color))
+    print(colorize('*' * 20 + " YOU SHOULD ONY SHARE YOUR PUBLIC KEY SO PEOPLE CAN MAKE TRANSACTIONS TO YOUR ACCOUNT " + '*' * 20, color))
+    print(colorize('*' * 37 + " Private key: {} ".format(private_key) + '*' * 37, color))
+    print(colorize('*' * 37 + " Public key: {} ".format(public_key) + '*' * 37, color))
+    print(colorize('*' * 126, color))
     print()
 
 
 def display_tx_confirmation(tx, balance, tx_amount):
+    color = 'yellow'
+
     print()
-    print(('#' * 20) + "\tTRANSACTION CONFIRMATION\t" + '#' * 20)
-    print("Your actual balance: {}".format(coins_amount_msg(balance)))
-    print("Your balance after validation of transaction by miners: {}".format(coins_amount_msg(balance - tx_amount)))
-    print('-' * 72)
-    print('Transaction amount: {}'.format(coins_amount_msg(tx_amount)))
-    print('Recipient: {}'.format(tx.get_outputs()[0].get_pubkey()))
-    print('#' * 72)
+    print(colorize(('#' * 20) + "\tTRANSACTION CONFIRMATION\t" + '#' * 20, color))
+    print(colorize("Your actual balance: {}".format(coins_amount_msg(balance)), color))
+    print(colorize("Your balance after validation of transaction by miners: {}".format(coins_amount_msg(balance - tx_amount)), color))
+    print(colorize('-' * 72, color))
+    print(colorize('Transaction amount: {}'.format(coins_amount_msg(tx_amount)), color))
+    print(colorize('Recipient: {}'.format(tx.get_outputs()[0].get_pubkey()), color))
+    print(colorize('#' * 72, color))
     print()
 
 
 def coins_amount_msg(amount):
     return "{} Falcoin{} (FLC)".format(amount, 's' if amount >= 2.0 else '')
+
+
+def colorize(string, color):
+    colors = {
+        'blue': '\033[94m',
+        'yellow': '\033[33m',
+        'red': '\033[31m',
+        'green': '\033[92m',
+        'magenta': '\033[35m',
+    }
+
+    if color not in colors:
+        return string
+
+    return colors[color] + string + '\033[0m'
 
 
 def ask_for_validation(msg=None):
@@ -60,8 +79,8 @@ def ask_for_validation(msg=None):
 def create_account():
     global repository
 
-    print(' [*] Creation of your account.')
-    print(" [*] Generating key pair...")
+    print(colorize('[*] Creation of your account.', 'magenta'))
+    print(colorize("[*] Generating key pair...", 'magenta'))
     # faking load
     time.sleep(1)
     private_key, public_key = crypto.generate_key_pair()
@@ -78,7 +97,7 @@ def sign_in():
     global user
     global repository
 
-    print('[*] Signing in.')
+    print(colorize('[*] Signing in.', 'magenta'))
 
     key_reg = r"^\w+$"
     user_input = ""
@@ -89,26 +108,26 @@ def sign_in():
         is_valid_input = re.match(key_reg, user_input)
         has_retried = not is_valid_input
 
-    print('[*] Connection...')
+    print(colorize('[*] Connection...', 'magenta'))
     # fake connecting user
     time.sleep(1)
     user = repository.get_user(user_input)
     if user is not None:
-        print("You are connected now.")
+        print(colorize("You are connected now.", 'green'))
     else:
-        print("Failed, this private key is not registered.")
+        print(colorize("Failed, this private key is not registered.", 'red'))
 
 
 def send_transaction():
     global user
 
-    print('[*] Making transaction.')
-    print("[*] Getting user balance...")
+    print(colorize('[*] Making transaction.', 'magenta'))
+    print(colorize("[*] Getting user balance...", 'magenta'))
     time.sleep(0.5)
     balance = ApiManager.get_balance(user.get_public_key())
-    print("User balance = {}.".format(coins_amount_msg(balance)))
+    print(colorize("User balance = {}.".format(coins_amount_msg(balance)), 'yellow'))
     if balance == 0.0:
-        print("You currently don't have any coin, you cannot make a transaction.")
+        print(colorize("You currently don't have any coin, you cannot make a transaction.", 'red'))
         return
 
     while True:
@@ -116,20 +135,19 @@ def send_transaction():
             tx_amount = float(input("> Enter the amount of the transaction: "))
             break
         except ValueError:
-            print('Please enter a float number.')
+            print(colorize('Please enter a float number.', 'red'))
 
     # as asked in the project specs, txs are fee-less but it can be modified
     fees = Transaction.fees_default_amount
     if balance + fees < tx_amount:
-        print("Transaction error:")
         if balance < tx_amount:
-            print("Your balance ({}) is lower than the amount of "
+            print(colorize("Your balance ({}) is lower than the amount of "
                   "the transaction you want to create which is equals to {}."
-                  .format(balance, tx_amount))
+                  .format(balance, tx_amount), 'red'))
         elif balance + fees < tx_amount:
-            print("Your balance ({}) + fees ({}) = {} is lower than the amount of "
+            print(colorize("Your balance ({}) + fees ({}) = {} is lower than the amount of "
                   "the transaction you want to create which is equals to {}."
-                  .format(balance, fees, balance + fees, tx_amount))
+                  .format(balance, fees, balance + fees, tx_amount), 'red'))
 
         return
 
@@ -139,7 +157,7 @@ def send_transaction():
     has_retried = False
     while not is_valid_input:
         user_input = input('> {}Please enter the public key of your recipient: '
-                           .format("Public key is not valid. " if has_retried else ""))
+                           .format(colorize("Public key is not valid. ", 'red') if has_retried else ""))
         is_valid_input = re.match(key_reg, user_input)
         has_retried = not is_valid_input
 
@@ -153,11 +171,11 @@ def send_transaction():
     if did_user_validates:
         # TODO: Send transaction to api
 
-        print("Success ! The transaction has been sent to the blockchain. "
+        print(colorize("Success ! The transaction has been sent to the blockchain. "
               "It is going to be validated by miners, please wait for confirmation.\n"
-              "It may take some time to reflect changes on your account.")
+              "It may take some time to reflect changes on your account.",'green'))
     else:
-        print("Transaction has been aborted.")
+        print(colorize("Transaction has been aborted.", 'red'))
 
 
 def my_transactions():
@@ -171,13 +189,14 @@ def my_transactions():
 def logout():
     global user
 
-    print('[*] Logging out user...\n')
+    print(colorize('[*] Logging out user...', 'magenta'))
     time.sleep(0.3)
     user = None
+    print(colorize('User successfully disconnected.\n', 'green'))
 
 
 def exit_app():
-    print('[*] Exiting application.')
+    print(colorize('[*] Exiting application.', 'magenta'))
     sys.exit(0)
 
 
@@ -186,12 +205,12 @@ def display_menu(menu_items, is_connected):
         cmd_title, func, must_be_connected, hide_if_connected = item
         if (must_be_connected and not is_connected) or (hide_if_connected and is_connected):
             continue
-        print("[{}] {}".format(index, cmd_title))
+        print(colorize("[{}] {}".format(index, cmd_title), 'blue'))
 
 
 def display_balance(user):
     balance = ApiManager.get_balance(user.get_public_key())
-    print("\n== Balance: {} ==\n".format(coins_amount_msg(balance)))
+    print(colorize("\n== Balance: {} ==\n".format(coins_amount_msg(balance)), 'yellow'))
 
 
 def main():
