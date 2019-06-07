@@ -30,8 +30,24 @@ def display_banner_keys(private_key, public_key):
     print()
 
 
+def display_tx_confirmation(tx, balance, tx_amount):
+    print()
+    print(('#' * 20) + "\tTRANSACTION CONFIRMATION\t" + '#' * 20)
+    print("Your actual balance: {}".format(coins_amount_msg(balance)))
+    print("Your balance after validation of transaction by miners: {}".format(coins_amount_msg(balance - tx_amount)))
+    print('-' * 72)
+    print('Transaction amount: {}'.format(coins_amount_msg(tx_amount)))
+    print('Recipient: {}'.format(tx.get_outputs()[0].get_pubkey()))
+    print('#' * 72)
+    print()
+
+
+def coins_amount_msg(amount):
+    return "{} Falcoin{} (FLC)".format(amount, 's' if amount >= 2.0 else '')
+
+
 def ask_for_validation(msg=None):
-    default_msg = ">> Do you want to validate ? "\
+    default_msg = "> Do you want to validate ? "\
                   "\nEnter 'y' if yes, 'n' if you want to abort: "
 
     user_input = ""
@@ -44,8 +60,8 @@ def ask_for_validation(msg=None):
 def create_account():
     global repository
 
-    print('create account')
-    print("Generating key pair...")
+    print(' [*] Creation of your account.')
+    print(" [*] Generating key pair...")
     # faking load
     time.sleep(1)
     private_key, public_key = crypto.generate_key_pair()
@@ -62,35 +78,37 @@ def sign_in():
     global user
     global repository
 
-    print('sign in')
+    print('[*] Signing in.')
 
     key_reg = r"^\w+$"
     user_input = ""
     is_valid_input = False
     has_retried = False
     while not is_valid_input:
-        user_input = input('>> Please enter {} private key: '.format("a valid" if has_retried else "your"))
+        user_input = input('> Please enter {} private key: '.format("a valid" if has_retried else "your"))
         is_valid_input = re.match(key_reg, user_input)
         has_retried = not is_valid_input
-    print("Your private key:", user_input)
 
-    # fake loading of user
+    print('[*] Connection...')
+    # fake connecting user
     time.sleep(1)
     user = repository.get_user(user_input)
     if user is not None:
         print("You are connected now.")
     else:
-        print("Invalid private key.")
+        print("Failed, this private key is not registered.")
 
 
 def send_transaction():
     global user
 
-    print('send transaction')
-    print("Getting user's balance...")
+    print('[*] Making transaction.')
+    print("[*] Getting user balance...")
+    time.sleep(0.5)
     balance = ApiManager.get_balance(user.get_public_key())
+    print("User balance = {}.".format(coins_amount_msg(balance)))
     if balance == 0.0:
-        print("You currently don't have any coins, you cannot make a transaction.")
+        print("You currently don't have any coin, you cannot make a transaction.")
         return
 
     while True:
@@ -120,22 +138,24 @@ def send_transaction():
     is_valid_input = re.match(key_reg, user_input)
     has_retried = False
     while not is_valid_input:
-        user_input = input('>> {}Please enter the public key of your recipient: '
+        user_input = input('> {}Please enter the public key of your recipient: '
                            .format("Public key is not valid. " if has_retried else ""))
         is_valid_input = re.match(key_reg, user_input)
         has_retried = not is_valid_input
 
     tx_pubkey = user_input
-    print("Recipient:", tx_pubkey)
 
     transaction = Transaction.make_transaction(user, tx_amount, tx_pubkey, fees, ApiManager)
+
+    display_tx_confirmation(transaction, balance, tx_amount)
     did_user_validates = ask_for_validation()
 
     if did_user_validates:
         # TODO: Send transaction to api
 
         print("Success ! The transaction has been sent to the blockchain. "
-              "It is going to be validated by miners, please wait for confirmation.")
+              "It is going to be validated by miners, please wait for confirmation.\n"
+              "It may take some time to reflect changes on your account.")
     else:
         print("Transaction has been aborted.")
 
@@ -143,20 +163,21 @@ def send_transaction():
 def my_transactions():
     global user
 
-    print('my transactions')
     user_txs = ApiManager.get_transactions(user.get_public_key())
     print("{} transactions.".format(len(user_txs)))
+    # TODO: display transactions in table
 
 
 def logout():
     global user
 
-    print('logging out')
+    print('[*] Logging out user...\n')
+    time.sleep(0.3)
     user = None
 
 
 def exit_app():
-    print('exit')
+    print('[*] Exiting application.')
     sys.exit(0)
 
 
@@ -170,7 +191,7 @@ def display_menu(menu_items, is_connected):
 
 def display_balance(user):
     balance = ApiManager.get_balance(user.get_public_key())
-    print("\n== Balance: {} falcoins. ==\n".format(balance))
+    print("\n== Balance: {} ==\n".format(coins_amount_msg(balance)))
 
 
 def main():
