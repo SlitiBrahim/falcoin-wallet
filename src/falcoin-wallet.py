@@ -169,7 +169,11 @@ def send_transaction():
     did_user_validates = ask_for_validation()
 
     if did_user_validates:
-        # TODO: Send transaction to api
+        # False if request to api failed, True if transaction was added to transaction pool
+        added_to_tx_pool = ApiManager.create_transaction(transaction)
+        if not added_to_tx_pool:
+            print(colorize('Error: Failed to send transaction to blockchain.', 'red'))
+            return
 
         print(colorize("Success ! The transaction has been sent to the blockchain. "
               "It is going to be validated by miners, please wait for confirmation.\n"

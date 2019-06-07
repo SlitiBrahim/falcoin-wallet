@@ -10,6 +10,7 @@ class ApiManager:
     list_transactions_url = base_url + '/transactions'
     list_transactions_user_url = list_transactions_url + '?pubkey='
     output_info_url = base_url + '/output_information'
+    create_transaction_url = base_url + '/transactions'
 
     @staticmethod
     def get_balance(public_key):
@@ -33,6 +34,19 @@ class ApiManager:
             txs = [Transaction.deserialize(tx) for tx in data['transactions']]
 
         return txs
+
+    @staticmethod
+    def create_transaction(transaction):
+        url = ApiManager.create_transaction_url
+        req = request.Request(url)
+        req.add_header('Content-Type', 'application/json')
+        data = json.dumps(transaction.serialize()).encode('utf-8')
+
+        with request.urlopen(req, data) as resp:
+            if resp.getcode() is not 200:
+                return False
+
+            return True
 
     @staticmethod
     def get_output_info(output):
